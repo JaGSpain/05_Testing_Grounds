@@ -4,9 +4,8 @@ These are just the files from the course. Feel free to do whatever else legal wi
 ---
 ##  Author:Jose Antonio Gutierrez
 ---
-
 ## Lecture List
-*TG1 Testing Grounds Introduction
-*TG2 Testing Grounds GDD
-*TG3 Using Git LGF (Large File Support)
-*TG4 Marketing & Markdown
+* TG1 Testing Grounds Introduction
+* TG2 Testing Grounds GDD
+* TG3 Using Git LGF (Large File Support)
+* TG4 Marketing & Markdown
