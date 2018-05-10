@@ -45,6 +45,8 @@ class AFirstPersonCharacter : public ACharacter
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	class UMotionControllerComponent* L_MotionController;
 
+
+
 public:
 	AFirstPersonCharacter();
 
@@ -65,28 +67,38 @@ public:
 	FVector GunOffset;
 
 	/** Projectile class to spawn */
-	UPROPERTY(EditDefaultsOnly, Category=Projectile)
+	//UPROPERTY(EditDefaultsOnly, Category=Projectile)
 	TSubclassOf<class ABallProjectile> ProjectileClass;
 
+	//Asociaremos arma Tipo ACTOR AGun 
+	UPROPERTY(EditDefaultsOnly, Category = "Setup")
+	TSubclassOf<class AGun> GunBlueprint;
+
+
 	/** Sound to play each time we fire */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Gameplay)
-	class USoundBase* FireSound;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Gameplay)
+	//class USoundBase* FireSound;
 
 	/** AnimMontage to play each time we fire */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
-	class UAnimMontage* FireAnimation;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
+	//class UAnimMontage* FireAnimation;
 
 	/** Whether to use motion controller location for aiming. */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
 	uint32 bUsingMotionControllers : 1;
 
-protected:
-	
 	/** Fires a projectile. */
 	void OnFire();
 
+private:
+	AGun * Gun;
+
+protected:
+	
+
+
 	/** Resets HMD orientation and position in VR. */
-	void OnResetVR();
+	//void OnResetVR();
 
 	/** Handles moving forward/backward */
 	void MoveForward(float Val);
@@ -106,6 +118,7 @@ protected:
 	 */
 	void LookUpAtRate(float Rate);
 
+	
 	struct TouchData
 	{
 		TouchData() { bIsPressed = false;Location=FVector::ZeroVector;}
@@ -114,6 +127,7 @@ protected:
 		FVector Location;
 		bool bMoved;
 	};
+	
 	void BeginTouch(const ETouchIndex::Type FingerIndex, const FVector Location);
 	void EndTouch(const ETouchIndex::Type FingerIndex, const FVector Location);
 	void TouchUpdate(const ETouchIndex::Type FingerIndex, const FVector Location);
@@ -130,7 +144,7 @@ protected:
 	 * @param	InputComponent	The input component pointer to bind controls to
 	 * @returns true if touch controls were enabled.
 	 */
-	bool EnableTouchscreenMovement(UInputComponent* InputComponent);
+	//bool EnableTouchscreenMovement(UInputComponent* InputComponent);
 
 public:
 	/** Returns Mesh1P subobject **/
