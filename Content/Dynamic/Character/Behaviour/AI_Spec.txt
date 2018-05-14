@@ -1,0 +1,4 @@
+-If you can see the enemy an within(3m)(300units) shoot the enemy
+-If you can see the enemy and not within (3m) (300 units),move within while shooting the enemy
+-If can't see the enemy, but haven't visited the Last know Location, visit that Location
+else go next waypoint. 
