@@ -29,11 +29,17 @@ public:
 
 	/** AnimMontage to play each time we fire */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
-	class UAnimMontage* FireAnimation;
-	
-	//ForwardDeclaration. Evito abrir toda la libreria de animaciones
+	class UAnimMontage* FireAnimation1P;
+	/** AnimMontage to play each time we fire */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Gameplay)
-	class UAnimInstance* AnimInstance;
+	class UAnimMontage* FireAnimation3P;
+
+	/*AnimInstances */
+	UPROPERTY()
+	class UAnimInstance* AnimInstance1P;
+	
+	UPROPERTY()
+	class UAnimInstance* AnimInstance3P;
 
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

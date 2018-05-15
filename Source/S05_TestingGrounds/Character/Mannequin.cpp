@@ -40,8 +40,23 @@ void AMannequin::BeginPlay()
 		}
 
 	Gun = GetWorld()->SpawnActor<AGun>(GunBlueprint);
-	Gun ->AttachToComponent(Mesh1P, FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), TEXT("GripPoint"));
-	Gun->AnimInstance = GetMesh()->GetAnimInstance();
+	
+	//IsPlayerControlled will be true if is controlled by player.(Is a Character class method)
+	if (IsPlayerControlled())
+	{
+		Gun->AttachToComponent(Mesh1P, FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), TEXT("GripPoint"));
+	}
+	else
+	{
+		//We can't use Mesh3P, we need access to the default mesh using the GetMesh() method.
+		Gun->AttachToComponent(GetMesh(), FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), TEXT("GripPoint"));
+	}
+
+	//1P View
+	Gun->AnimInstance1P = Mesh1P->GetAnimInstance();
+	
+	//3P view
+	Gun->AnimInstance3P = GetMesh()->GetAnimInstance();
 
 	
 	
@@ -58,11 +73,23 @@ void AMannequin::Tick(float DeltaTime)
 void AMannequin::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-	// InputComponent is for AI controller, If this mannequin is possessed by a Player will be Null(requires Protection).The oposite inn PlayerInputComponent
+	// InputComponent is for AI controller, If this mannequin is possessed by a Player will be nullptr(requires Protection).The oposite inn PlayerInputComponent
 	if (!InputComponent) { return; }
 	InputComponent->BindAction("Fire", IE_Pressed, this, &AMannequin::PullTrigger);
 
 }
+
+
+void AMannequin::UnPossessed()
+{
+	Super::UnPossessed();
+
+	if (!Gun) { return; }
+	Gun->AttachToComponent(GetMesh(), FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), TEXT("GripPoint"));
+
+
+}
+
 
 //Called OnFire method in class Gun.
 void AMannequin::PullTrigger()
