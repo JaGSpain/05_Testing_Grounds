@@ -1,8 +1,8 @@
 // Copyleft
 
 #include "Tile.h"
-
-
+//#include "Kismet/GameplayStatics.h"
+#include "Engine/World.h"
 // Sets default values
 ATile::ATile()
 {
@@ -12,22 +12,42 @@ ATile::ATile()
 }
 
 
-
-void ATile::PlaceActors()
+void ATile::PlaceActors(TSubclassOf<AActor> ToSpawn, int32 MinSpawn,int32 MaxSpawn,bool bOnlyRandRotationYaw)
 {
 
-	FVector Min(0, -2000, 0);
-	FVector Max(4000, 2000, 0);
+	FVector Min(0, -2000, 50);
+	FVector Max(4000, 2000, 50);
 	//Box where we put random points
 	FBox Bounds(Min, Max);
 	
-	//Generating  random points
-	for (size_t i = 0; i < 20; i++)
+	//Generating  random quantity of Actors to Spawn
+	int32 NumberToSpawn = FMath::RandRange(MinSpawn, MaxSpawn);
+
+	//Spawning in location
+	for (size_t i = 0; i < NumberToSpawn; i++)
 	{
-	FVector SpawnPoint=	FMath::RandPointInBox(Bounds);
-	UE_LOG(LogTemp, Warning, TEXT("spawn point: %s"), *SpawnPoint.ToCompactString());
+		FVector SpawnPoint=	FMath::RandPointInBox(Bounds);
+		
+		//Giving random rotation
+		if (bOnlyRandRotationYaw)
+		{
+			FRotator SpawnAngle(0, FMath::FRandRange(0, 360), 0);
+			AActor* Spawned = GetWorld()->SpawnActor<AActor>(ToSpawn, SpawnPoint, SpawnAngle);
+			Spawned->AttachToActor(this, FAttachmentTransformRules(EAttachmentRule::KeepRelative, false));
+		}
+		else
+		{
+			FRotator SpawnAngle(0, FMath::FRandRange(0, 360),FMath::FRandRange(0, 360));
+			AActor* Spawned = GetWorld()->SpawnActor<AActor>(ToSpawn, SpawnPoint, SpawnAngle);
+			Spawned->AttachToActor(this, FAttachmentTransformRules(EAttachmentRule::KeepRelative, false));
+		}
+			
+		//Spawned->SetActorRelativeLocation(SpawnPoint);
+		
+		UE_LOG(LogTemp, Warning, TEXT("spawn point: %s, Number of Assets Generated:%i"), *SpawnPoint.ToCompactString(),NumberToSpawn);
 	
 	}
+
 	
 }
 

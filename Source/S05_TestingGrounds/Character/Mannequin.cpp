@@ -73,7 +73,7 @@ void AMannequin::Tick(float DeltaTime)
 void AMannequin::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-	// InputComponent is for AI controller, If this mannequin is possessed by a Player will be nullptr(requires Protection).The oposite inn PlayerInputComponent
+	// InputComponent is for AI controller, If this mannequin is possessed by a Player will be nullpt(requires Protection).The oposite inn PlayerInputComponent
 	if (!InputComponent) { return; }
 	InputComponent->BindAction("Fire", IE_Pressed, this, &AMannequin::PullTrigger);
 
