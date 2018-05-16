@@ -72,13 +72,19 @@ bool ATile::CastSphere(FVector Location, float Radius)
 {
 	FHitResult HitResult;
 	
-	//FQuat Identity 
+	//FQuat Identity. 
+	//Create a Custom Collision Channel in our Project/Setting/Collision Channel New. 
+		//For know which number our engine is going to give to it we must go to our files in the
+		// Config file,open DefaultEngine.ini and look for the name which you gave in the editor.
+		// You can see the name that the engine assigned to that custom channel and it will be we use in c++.
 	bool HasHit=GetWorld()->SweepSingleByChannel(HitResult, Location, Location,
-				FQuat::Identity, ECollisionChannel::ECC_Camera, FCollisionShape::MakeSphere(Radius)
+				FQuat::Identity, ECollisionChannel::ECC_GameTraceChannel2, FCollisionShape::MakeSphere(Radius)
 				);
 	//Drawing a DebugSphere (requires include "DrawDebugHelpers.h")
 	FColor ResultColor = HasHit ? FColor::Red : FColor::Green ;
-	DrawDebugSphere(GetWorld(), Location, Radius, 16, ResultColor, true, 100,0,3.f);
+	DrawDebugCapsule(GetWorld(), Location, 100, Radius, FQuat::Identity, ResultColor, true, 100, 0, 3.f);
+
+	//DrawDebugSphere(GetWorld(), Location, Radius, 16, ResultColor, true, 100,0,3.f);
 
 	return HasHit;
 	
