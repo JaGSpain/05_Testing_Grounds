@@ -13,9 +13,8 @@ ATile::ATile()
 }
 
 
-void ATile::PlaceActors(TSubclassOf<AActor> ToSpawn, int32 MinSpawn,int32 MaxSpawn,float Radius, bool bOnlyRandRotationYaw)
+void ATile::PlaceActors(TSubclassOf<AActor> ToSpawn, int MinSpawn , int MaxSpawn , float Radius , float MinScale , float MaxScale , bool bOnlyRandRotationYaw)
 {
-	
 	//Generating  random quantity of Actors to Spawn
 	int32 NumberToSpawn = FMath::RandRange(MinSpawn, MaxSpawn);
 
@@ -25,10 +24,16 @@ void ATile::PlaceActors(TSubclassOf<AActor> ToSpawn, int32 MinSpawn,int32 MaxSpa
 		
 		FVector SpawnPoint;
 		//Spawn If is a empty location.
-		bool bFound = FindEmptyLocation(SpawnPoint,Radius);
+		float RandomScale = FMath::RandRange(MinScale, MaxScale);
+		bool bFound = FindEmptyLocation(SpawnPoint,Radius*RandomScale);
+		
+
 		if (bFound)
 		{
-			PlaceActor(ToSpawn, SpawnPoint, bOnlyRandRotationYaw);
+			float RandomRotation = FMath::RandRange(-180.f, 180.f);
+			
+			
+			PlaceActor(ToSpawn, SpawnPoint, bOnlyRandRotationYaw, RandomRotation,RandomScale);
 		}
 			
 	}
@@ -61,41 +66,42 @@ bool ATile::FindEmptyLocation(FVector& OutLocation,float Radius)
 }
 
 
-void ATile::PlaceActor(TSubclassOf<AActor>ToSpawn, FVector SpawnPoint,bool bOnlyRandRotationYaw)
+void ATile::PlaceActor(TSubclassOf<AActor>ToSpawn, FVector SpawnPoint,bool bOnlyRandRotationYaw,float RandomRotation, float RandomScale)
 {
 	
+
+	//Was my solution
 	//UE_LOG(LogTemp,Warning,TEXT("bOnlyRandRotationYaw:%i, NameOfActor:%s"), bOnlyRandRotationYaw,*ToSpawn->GetName())
-	if (bOnlyRandRotationYaw)
+	/*if (bOnlyRandRotationYaw)
 	{
 		
 		FRotator SpawnAngle(0, FMath::FRandRange(0, 360), 0);
-		AActor* Spawned = GetWorld()->SpawnActor<AActor>(ToSpawn, SpawnPoint, SpawnAngle);
-		Spawned->AttachToActor(this, FAttachmentTransformRules(EAttachmentRule::KeepRelative, false));
+		
 	}
 	else
 	{
 		FRotator SpawnAngle(0, FMath::FRandRange(0, 360), FMath::FRandRange(0, 360));
 		AActor* Spawned = GetWorld()->SpawnActor<AActor>(ToSpawn, SpawnPoint, SpawnAngle);
 		Spawned->AttachToActor(this, FAttachmentTransformRules(EAttachmentRule::KeepRelative, false));
+	}*/
+
+	AActor* Spawned = GetWorld()->SpawnActor<AActor>(ToSpawn);
+	Spawned->SetActorRelativeLocation(SpawnPoint);
+	Spawned->AttachToActor(this, FAttachmentTransformRules(EAttachmentRule::KeepRelative, false));
+	Spawned->SetActorScale3D(FVector(RandomScale));
+
+	if (bOnlyRandRotationYaw) 
+	{
+		Spawned->SetActorRotation(FRotator(0, RandomRotation, 0));
 	}
-}
-
-
-
-// Called when the game starts or when spawned
-void ATile::BeginPlay()
-{
-	Super::BeginPlay();
-	//CastSphere(GetActorLocation(), 300);
-	//CastSphere(GetActorLocation()+FVector(0,0,1000), 300);
-}
-
-// Called every frame
-void ATile::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
+	
+	else
+	{
+		Spawned->SetActorRotation(FRotator(0, RandomRotation, RandomRotation));
+	}
 
 }
+
 
 
 bool ATile::CanSpawnAtLocation(FVector Location, float Radius)
@@ -119,7 +125,7 @@ bool ATile::CanSpawnAtLocation(FVector Location, float Radius)
 				);
 	//Drawing a DebugSphere (requires include "DrawDebugHelpers.h")
 	FColor ResultColor = HasHit ? FColor::Red : FColor::Green ;
-	DrawDebugCapsule(GetWorld(), GlobalLocation, 0, Radius, FQuat::Identity, ResultColor, true, 100, 0, 3.f);
+	//DrawDebugCapsule(GetWorld(), GlobalLocation, 0, Radius, FQuat::Identity, ResultColor, true, 100, 0, 3.f);
 
 	//DrawDebugSphere(GetWorld(), Location, Radius, 16, ResultColor, true, 100,0,3.f);
 
