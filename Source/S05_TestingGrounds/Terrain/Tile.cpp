@@ -4,6 +4,8 @@
 //#include "Kismet/GameplayStatics.h"
 #include "Engine/World.h"
 #include "DrawDebugHelpers.h"
+#include "EngineUtils.h"
+
 // Sets default values
 ATile::ATile()
 {
@@ -12,6 +14,25 @@ ATile::ATile()
 
 }
 
+
+void ATile::BeginPlay()
+{
+	Super::BeginPlay();
+	
+	//Busqueda entre todos los actores
+	/*
+	TActorIterator<AActor> ActorIterator = TActorIterator<AActor>(GetWorld());
+	
+	
+	while (ActorIterator)
+	{
+		AActor*FoundActor = *ActorIterator;
+		UE_LOG(LogTemp, Warning, TEXT("Found Actor=%s"), *FoundActor->GetName());
+	
+	++ActorIterator;
+	}
+	*/
+}
 
 void ATile::PlaceActors(TSubclassOf<AActor> ToSpawn, int MinSpawn , int MaxSpawn , float Radius , float MinScale , float MaxScale , bool bOnlyRandRotationYaw)
 {

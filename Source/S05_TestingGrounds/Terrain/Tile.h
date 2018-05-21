@@ -28,6 +28,7 @@ protected:
 	float MinScale = 1.f;
 	float MaxScale = 1.f;
 
+	virtual void BeginPlay();
 public:	
 	// Called every frame
 	
