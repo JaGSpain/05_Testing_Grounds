@@ -6,6 +6,10 @@
 #include "GameFramework/Actor.h"
 #include "Tile.generated.h"
 
+
+class UActorPool;
+
+
 UCLASS()
 class S05_TESTINGGROUNDS_API ATile : public AActor
 {
@@ -28,10 +32,20 @@ protected:
 	float MinScale = 1.f;
 	float MaxScale = 1.f;
 
-	virtual void BeginPlay();
+	virtual void BeginPlay()override;
+
+	// Look in Actor life cycle
+	//https://docs.unrealengine.com/en-us/Programming/UnrealArchitecture/Actors/ActorLifecycle
+
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
 public:	
-	// Called every frame
-	
+	virtual void Tick(float DeltaTime) override;
+
+	UFUNCTION(BlueprintCallable, Category = "Pool")
+	void SetPool(UActorPool* Pool);
+
+			
 
 private:
 	
@@ -45,6 +59,10 @@ private:
 	
 	bool bOnlyRandRotationYaw;//Used For give randon rotation in Yaw axis only
 	
+	UActorPool* Pool;
 
+	AActor* NavMeshBoundsVolume;
+
+	void PositionNavMeshBoundsVolume();
 
 };

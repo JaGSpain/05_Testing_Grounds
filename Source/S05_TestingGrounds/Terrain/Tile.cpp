@@ -5,6 +5,7 @@
 #include "Engine/World.h"
 #include "DrawDebugHelpers.h"
 #include "EngineUtils.h"
+#include "ActorPool.h"
 
 // Sets default values
 ATile::ATile()
@@ -15,24 +16,50 @@ ATile::ATile()
 }
 
 
+//Setter Method
+void ATile::SetPool(UActorPool* InPool)
+{
+	if (!InPool) { return; }
+	
+	Pool = InPool;
+	UE_LOG(LogTemp, Error, TEXT("[%s]Setting Pool %s"),*GetName(),*InPool->GetName())
+	PositionNavMeshBoundsVolume();
+}
+
+void ATile::PositionNavMeshBoundsVolume()
+{
+	
+	NavMeshBoundsVolume = Pool->CheckOut();
+	if (!NavMeshBoundsVolume)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Not Enough Actors In Pool"))
+		return;
+	}
+	NavMeshBoundsVolume->SetActorLocation(GetActorLocation());
+}
+
+
+ void ATile::Tick(float DeltaTime)
+{
+
+}
+
 void ATile::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	//Busqueda entre todos los actores
-	/*
-	TActorIterator<AActor> ActorIterator = TActorIterator<AActor>(GetWorld());
-	
-	
-	while (ActorIterator)
-	{
-		AActor*FoundActor = *ActorIterator;
-		UE_LOG(LogTemp, Warning, TEXT("Found Actor=%s"), *FoundActor->GetName());
-	
-	++ActorIterator;
-	}
-	*/
+
 }
+
+
+void ATile::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	
+	
+	Pool->Return(NavMeshBoundsVolume);
+
+}
+
 
 void ATile::PlaceActors(TSubclassOf<AActor> ToSpawn, int MinSpawn , int MaxSpawn , float Radius , float MinScale , float MaxScale , bool bOnlyRandRotationYaw)
 {
