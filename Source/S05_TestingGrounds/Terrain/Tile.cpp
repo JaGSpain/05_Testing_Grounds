@@ -13,6 +13,10 @@ ATile::ATile()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	//Settings Defaults Value
+	MinExtents=FVector (0, -2000, 50);
+	MaxExtents=FVector (4000, 2000, 50);
+
 }
 
 
@@ -22,7 +26,7 @@ void ATile::SetPool(UActorPool* InPool)
 	if (!InPool) { return; }
 	
 	Pool = InPool;
-	UE_LOG(LogTemp, Error, TEXT("[%s]Setting Pool %s"),*GetName(),*InPool->GetName())
+	UE_LOG(LogTemp, Warning, TEXT("[%s]Setting Pool %s"), *GetName(), *InPool->GetName());
 	PositionNavMeshBoundsVolume();
 }
 
@@ -32,9 +36,13 @@ void ATile::PositionNavMeshBoundsVolume()
 	NavMeshBoundsVolume = Pool->CheckOut();
 	if (!NavMeshBoundsVolume)
 	{
-		UE_LOG(LogTemp, Error, TEXT("Not Enough Actors In Pool"))
+		UE_LOG(LogTemp, Error, TEXT("[%s]Not Enough Actors In Pool."), *GetName());
 		return;
 	}
+
+	UE_LOG(LogTemp, Warning, TEXT("[%s]CHECKOUT: { %s}"), *GetName(), *NavMeshBoundsVolume->GetName());
+	
+		//Using the Tile Location as the location for out NavMeshBoundsVolume
 	NavMeshBoundsVolume->SetActorLocation(GetActorLocation());
 }
 
@@ -91,11 +99,9 @@ void ATile::PlaceActors(TSubclassOf<AActor> ToSpawn, int MinSpawn , int MaxSpawn
 
 bool ATile::FindEmptyLocation(FVector& OutLocation,float Radius)
 {
-	//Max size of our Tile (Box)
-	FVector Min(0, -2000, 50);
-	FVector Max(4000, 2000, 50);
+	
 	//Box where we put random points
-	FBox Bounds(Min, Max);
+	FBox Bounds(MinExtents, MaxExtents);
 		
 	const int32 MaxAttemps=100;
 	

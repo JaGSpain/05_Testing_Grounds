@@ -17,32 +17,30 @@ UActorPool::UActorPool()
 AActor* UActorPool::CheckOut()
 {
 	
-	UE_LOG(LogTemp,Warning,TEXT("[%s] CHECKOUT."),*GetName())
-	return nullptr;
+		
+	//Elimino elemento de la cadena TArray
+	
+	if (!Pool.Num()) 
+	{
+		UE_LOG(LogTemp, Error, TEXT("[%s] Non Elements in the pool."), *GetName());
+		return nullptr; 
+	}
+		
+		return Pool.Pop();
+
+	
 }
 
 void UActorPool::Return(AActor* ActorToReturn)
 {
 
-	if (!ActorToReturn) 
-	{
-		UE_LOG(LogTemp, Error, TEXT("[%s] Returned NullActor:"), *GetName());
-	
-		return;
-	}
-	UE_LOG(LogTemp, Warning, TEXT("[%s] Actor returned:{%s}!!"), *GetName(),*ActorToReturn->GetName());
+	Add(ActorToReturn);
+
 }
 
 void  UActorPool::Add(AActor* ActorToAdd)
 {
 
-	if (!ActorToAdd)
-	{
-		UE_LOG(LogTemp, Error, TEXT("[%s] Added Null Actor:"), *GetName());
-
-		return;
-	}
-	UE_LOG(LogTemp, Warning, TEXT("[%s] Actor added:{%s}!!"), *GetName(), *ActorToAdd->GetName());
-
+	Pool.Push(ActorToAdd);
 
 }

@@ -25,7 +25,12 @@ public:
 
 protected:
 	// Called when the game starts or when spawned
-	
+	UPROPERTY(EditDefaultsOnly, Category = "Spawning")
+	FVector MinExtents;
+	UPROPERTY(EditDefaultsOnly, Category = "Spawning")
+	FVector MaxExtents;
+
+
 	int MinSpawn = 1;
 	int MaxSpawn = 1;
 	float Radius = 500.f;
