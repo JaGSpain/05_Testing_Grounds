@@ -19,6 +19,10 @@ ATile::ATile()
 	MaxExtents=FVector (4000, 2000, 50);
 	
 	NavigationBoundsOffSet = FVector(2000, 0, 0);
+
+	
+	
+
 }
 
 
@@ -73,33 +77,49 @@ void ATile::EndPlay(const EEndPlayReason::Type EndPlayReason)
 }
 
 
-void ATile::PlaceActors(TSubclassOf<AActor> ToSpawn, int MinSpawn , int MaxSpawn , float Radius , float MinScale , float MaxScale , bool bOnlyRandRotationYaw)
+void ATile::PlaceActors(TSubclassOf<AActor> ToSpawn, int MinSpawn , int MaxSpawn ,float Radius,float MinScale,float MaxScale,bool bOnlyRandRotationYaw)
 {
+	
 	//Generating  random quantity of Actors to Spawn
-	int32 NumberToSpawn = FMath::RandRange(MinSpawn, MaxSpawn);
+	
+	TArray<FSpawnPosition> SpawnPositions = RandomSpawnPositions(MinSpawn,  MaxSpawn,  Radius,  MinScale,  MaxScale,  bOnlyRandRotationYaw);
 
+	for (FSpawnPosition SpawnPosition : SpawnPositions)
+	{
+		PlaceActor(ToSpawn, SpawnPosition);
+
+	}
+		
+}
+
+TArray <FSpawnPosition> ATile::RandomSpawnPositions(int MinSpawn, int MaxSpawn, float Radius, float MinScale, float MaxScale, bool bOnlyRandRotationYaw)
+{
+	TArray<FSpawnPosition> SpawnPositions;
+	int32 NumberToSpawn = FMath::RandRange(MinSpawn, MaxSpawn);
 	//Spawning in location
 	for (size_t i = 0; i < NumberToSpawn; i++)
 	{
-		
-		FVector SpawnPoint;
+
+		FSpawnPosition SpawnPosition;
 		//Spawn If is a empty location.
-		float RandomScale = FMath::RandRange(MinScale, MaxScale);
-		bool bFound = FindEmptyLocation(SpawnPoint,Radius*RandomScale);
+		SpawnPosition.RandomScale = FMath::RandRange(MinScale, MaxScale);
 		
+		bool bFound = FindEmptyLocation(SpawnPosition.RandomLocation, Radius*SpawnPosition.RandomScale);
+
 
 		if (bFound)
 		{
-			float RandomRotation = FMath::RandRange(-180.f, 180.f);
-			
-			
-			PlaceActor(ToSpawn, SpawnPoint, bOnlyRandRotationYaw, RandomRotation,RandomScale);
+			SpawnPosition.RandomRotation = FMath::RandRange(-180.f, 180.f);
+
+			SpawnPositions.Add(SpawnPosition);// We can use the methon .Push() too for add an element to the TArray
+
 		}
-			
+
 	}
-	
-	
+
+	return SpawnPositions;
 }
+
 
 bool ATile::FindEmptyLocation(FVector& OutLocation,float Radius)
 {
@@ -124,38 +144,23 @@ bool ATile::FindEmptyLocation(FVector& OutLocation,float Radius)
 }
 
 
-void ATile::PlaceActor(TSubclassOf<AActor>ToSpawn, FVector SpawnPoint,bool bOnlyRandRotationYaw,float RandomRotation, float RandomScale)
+void ATile::PlaceActor(TSubclassOf<AActor>ToSpawn, const FSpawnPosition& SpawnPosition)
 {
 	
-
-	//Was my solution
-	//UE_LOG(LogTemp,Warning,TEXT("bOnlyRandRotationYaw:%i, NameOfActor:%s"), bOnlyRandRotationYaw,*ToSpawn->GetName())
-	/*if (bOnlyRandRotationYaw)
-	{
 		
-		FRotator SpawnAngle(0, FMath::FRandRange(0, 360), 0);
-		
-	}
-	else
-	{
-		FRotator SpawnAngle(0, FMath::FRandRange(0, 360), FMath::FRandRange(0, 360));
-		AActor* Spawned = GetWorld()->SpawnActor<AActor>(ToSpawn, SpawnPoint, SpawnAngle);
-		Spawned->AttachToActor(this, FAttachmentTransformRules(EAttachmentRule::KeepRelative, false));
-	}*/
-
 	AActor* Spawned = GetWorld()->SpawnActor<AActor>(ToSpawn);
-	Spawned->SetActorRelativeLocation(SpawnPoint);
+	Spawned->SetActorRelativeLocation(SpawnPosition.RandomLocation);
 	Spawned->AttachToActor(this, FAttachmentTransformRules(EAttachmentRule::KeepRelative, false));
-	Spawned->SetActorScale3D(FVector(RandomScale));
+	Spawned->SetActorScale3D(FVector(SpawnPosition.RandomScale));
 
-	if (bOnlyRandRotationYaw) 
+	if (SpawnPosition.bOnlyRandRotationYaw) 
 	{
-		Spawned->SetActorRotation(FRotator(0, RandomRotation, 0));
+		Spawned->SetActorRotation(FRotator(0, SpawnPosition.RandomRotation, 0));
 	}
 	
 	else
 	{
-		Spawned->SetActorRotation(FRotator(0, RandomRotation, RandomRotation));
+		Spawned->SetActorRotation(FRotator(SpawnPosition.RandomRotation));
 	}
 
 }
@@ -169,7 +174,6 @@ bool ATile::CanSpawnAtLocation(FVector Location, float Radius)
 	//Deberemos convertir las coordenadas de spawn a globales puesto que vamos a Spawnear en el nivel. 
 	// ActorToWorld(), GetTransform(),GetActorTransform().
 	FVector GlobalLocation=ActorToWorld().TransformPosition(Location);
-
 
 	//FQuat Identity. 
 	//Create a Custom Collision Channel in our Project/Setting/Collision Channel New. 
