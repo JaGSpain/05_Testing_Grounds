@@ -19,8 +19,6 @@ ATile::ATile()
 	MaxExtents=FVector (4000, 2000, 50);
 	
 	NavigationBoundsOffSet = FVector(2000, 0, 0);
-
-	
 	
 
 }
@@ -70,10 +68,7 @@ void ATile::BeginPlay()
 
 void ATile::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
-	
-	
 	Pool->Return(NavMeshBoundsVolume);
-
 }
 
 
@@ -91,6 +86,34 @@ void ATile::PlaceActors(TSubclassOf<AActor> ToSpawn, int MinSpawn , int MaxSpawn
 	}
 		
 }
+
+
+//**Placing AI**// 
+void ATile::PlaceAIPawns(TSubclassOf<APawn> ToSpawn, int MinSpawn, int MaxSpawn, float Radius)
+{
+	TArray<FSpawnPosition> SpawnPositions = RandomSpawnPositions(MinSpawn, MaxSpawn, Radius,1.f,1.f,0);
+
+	for (FSpawnPosition SpawnPosition : SpawnPositions)
+	{
+		PlaceAIPawn(ToSpawn, SpawnPosition);
+	}
+
+}
+
+void ATile::PlaceAIPawn(TSubclassOf<APawn> ToSpawn, FSpawnPosition SpawnPosition)
+{
+	APawn* Spawned = GetWorld()->SpawnActor<APawn>(ToSpawn);
+	Spawned->SetActorRelativeLocation(SpawnPosition.RandomLocation);
+	Spawned->AttachToActor(this, FAttachmentTransformRules(EAttachmentRule::KeepRelative, false));
+	Spawned->SetActorRotation(FRotator(0, SpawnPosition.RandomRotation, 0));
+
+	//Asegura que APawn esta poseido
+	Spawned->SpawnDefaultController();
+
+	//Asegura que todos los APawn controllados por la AI son Enemy
+	Spawned->Tags.Add(FName("Enemy"));
+}
+
 
 TArray <FSpawnPosition> ATile::RandomSpawnPositions(int MinSpawn, int MaxSpawn, float Radius, float MinScale, float MaxScale, bool bOnlyRandRotationYaw)
 {

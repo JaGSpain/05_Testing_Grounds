@@ -32,9 +32,11 @@ public:
 	// Sets default values for this actor's properties
 	ATile();
 
-	UFUNCTION(BlueprintCallable, Category = "Weapon")
+	UFUNCTION(BlueprintCallable, Category = "Spawning")
 	void PlaceActors(TSubclassOf<AActor> ToSpawn, int MinSpawn, int MaxSpawn, float Radius, float MinScale, float MaxScale, bool bOnlyRandRotationYaw);
 		
+	UFUNCTION(BlueprintCallable, Category = "Spawning")
+	void PlaceAIPawns(TSubclassOf<APawn> ToSpawn, int MinSpawn, int MaxSpawn, float Radius);
 
 protected:
 	// Called when the game starts or when spawned
@@ -91,6 +93,8 @@ private:
 
 	void PlaceActor(TSubclassOf<AActor>ToSpawn,const FSpawnPosition& SpawnPosition );
 
+	void PlaceAIPawn(TSubclassOf<APawn> ToSpawn, FSpawnPosition SpawnPosition);
+
 	bool CanSpawnAtLocation(FVector Location, float Radius);
 	
 	bool bOnlyRandRotationYaw;//Used For give randon rotation in Yaw axis only
@@ -103,4 +107,8 @@ private:
 
 	TArray <FSpawnPosition> RandomSpawnPositions(int MinSpawn, int MaxSpawn, float Radius, float MinScale, float MaxScale, bool bOnlyRandRotationYaw);
 
+
+
 };
+
+
