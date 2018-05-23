@@ -6,6 +6,7 @@
 #include "DrawDebugHelpers.h"
 #include "EngineUtils.h"
 #include "ActorPool.h"
+#include "AI/Navigation/NavigationSystem.h"
 
 // Sets default values
 ATile::ATile()
@@ -16,15 +17,15 @@ ATile::ATile()
 	//Settings Defaults Value
 	MinExtents=FVector (0, -2000, 50);
 	MaxExtents=FVector (4000, 2000, 50);
-
+	
+	NavigationBoundsOffSet = FVector(2000, 0, 0);
 }
 
 
 //Setter Method
 void ATile::SetPool(UActorPool* InPool)
 {
-	if (!InPool) { return; }
-	
+		
 	Pool = InPool;
 	UE_LOG(LogTemp, Warning, TEXT("[%s]Setting Pool %s"), *GetName(), *InPool->GetName());
 	PositionNavMeshBoundsVolume();
@@ -40,10 +41,13 @@ void ATile::PositionNavMeshBoundsVolume()
 		return;
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("[%s]CHECKOUT: { %s}"), *GetName(), *NavMeshBoundsVolume->GetName());
+	UE_LOG(LogTemp, Warning, TEXT("[%s]Checked out: { %s}"), *GetName(), *NavMeshBoundsVolume->GetName());
 	
-		//Using the Tile Location as the location for out NavMeshBoundsVolume
-	NavMeshBoundsVolume->SetActorLocation(GetActorLocation());
+	//Using the Tile Location as the location for out NavMeshBoundsVolume
+	NavMeshBoundsVolume->SetActorLocation(GetActorLocation()+NavigationBoundsOffSet	);
+
+	//Updating The UNavMeshVolume
+	GetWorld()->GetNavigationSystem()->Build();
 }
 
 

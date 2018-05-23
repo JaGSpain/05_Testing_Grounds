@@ -30,6 +30,10 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Spawning")
 	FVector MaxExtents;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Navigation")
+	FVector NavigationBoundsOffSet;
+
+
 
 	int MinSpawn = 1;
 	int MaxSpawn = 1;

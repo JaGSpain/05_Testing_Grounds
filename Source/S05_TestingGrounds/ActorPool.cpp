@@ -25,7 +25,7 @@ AActor* UActorPool::CheckOut()
 		UE_LOG(LogTemp, Error, TEXT("[%s] Non Elements in the pool."), *GetName());
 		return nullptr; 
 	}
-		
+			
 		return Pool.Pop();
 
 	
