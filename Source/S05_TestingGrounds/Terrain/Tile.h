@@ -53,16 +53,16 @@ protected:
 	int MinSpawn = 1;
 
 	//UPROPERTY(EditDefaultsOnly, Category = "Spawn Parameters")
-		int MaxSpawn = 1;
+	int MaxSpawn = 1;
 
 	//UPROPERTY(EditDefaultsOnly, Category = "Spawn Parameters")
-		float Radius = 500.0f;
+	float Radius = 500.0f;
 
 	//UPROPERTY(EditDefaultsOnly, Category = "Spawn Parameters")
-		float MinScale = 1.f;
+	float MinScale = 1.f;
 
 	//UPROPERTY(EditDefaultsOnly, Category = "Spawn Parameters")
-		float MaxScale = 1.f;
+	float MaxScale = 1.f;
 
 	//UPROPERTY(EditDefaultsOnly, Category = "Spawn Parameters")
 	
@@ -91,9 +91,15 @@ private:
 	//So we'll doo the same here
 	bool FindEmptyLocation(FVector& OutLocation,float Radius);
 
-	void PlaceActor(TSubclassOf<AActor>ToSpawn,const FSpawnPosition& SpawnPosition );
 
-	void PlaceAIPawn(TSubclassOf<APawn> ToSpawn, FSpawnPosition SpawnPosition);
+	template<class T>
+	void RandomlyPlaceActors(TSubclassOf<T> ToSpawn, int MinSpawn, int MaxSpawn, float Radius, float MinScale, float MaxScale, bool bOnlyRandRotationYaw);
+
+	//Using Polymorphism
+	void PlaceActor(TSubclassOf<AActor>ToSpawn,const FSpawnPosition SpawnPosition );
+
+	//Using Polymorphism
+	void PlaceActor(TSubclassOf<APawn> ToSpawn, FSpawnPosition SpawnPosition);
 
 	bool CanSpawnAtLocation(FVector Location, float Radius);
 	
@@ -105,7 +111,7 @@ private:
 
 	void PositionNavMeshBoundsVolume();
 
-	TArray <FSpawnPosition> RandomSpawnPositions(int MinSpawn, int MaxSpawn, float Radius, float MinScale, float MaxScale, bool bOnlyRandRotationYaw);
+	
 
 
 
