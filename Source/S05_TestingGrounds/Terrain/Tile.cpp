@@ -68,6 +68,11 @@ void ATile::BeginPlay()
 
 void ATile::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
+	
+	if (!Pool && !NavMeshBoundsVolume)
+	{
+		return;
+	}
 	Pool->Return(NavMeshBoundsVolume);
 }
 
@@ -143,11 +148,13 @@ bool ATile::FindEmptyLocation(FVector& OutLocation,float Radius)
 //Using of Polymorphism
 void ATile::PlaceActor(TSubclassOf<APawn> ToSpawn, FSpawnPosition SpawnPosition)
 {
-	APawn* Spawned = GetWorld()->SpawnActor<APawn>(ToSpawn);
+
+	FRotator Rotation = FRotator(0, SpawnPosition.RandomRotation, 0);
+	APawn* Spawned = GetWorld()->SpawnActor<APawn>(ToSpawn,SpawnPosition.RandomLocation, Rotation);
 	if (!Spawned) { return; }
-	Spawned->SetActorRelativeLocation(SpawnPosition.RandomLocation);
+
 	Spawned->AttachToActor(this, FAttachmentTransformRules(EAttachmentRule::KeepRelative, false));
-	Spawned->SetActorRotation(FRotator(0, SpawnPosition.RandomRotation, 0));
+	
 
 	//Asegura que APawn esta poseido
 	Spawned->SpawnDefaultController();
